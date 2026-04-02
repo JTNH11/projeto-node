@@ -7,11 +7,11 @@ router.get('/', async (req, res) => {
   try {
     const client = await clientPromise;
     const db = client.db("jplima_db"); 
-    const contatos = await db.collection("pokemon").find({}).toArray();
+    const contatos = await db.collection("brasileiro").find({}).toArray();
     res.json(contatos);
   } catch (err) {
-    console.error("Erro ao buscar contatos:", err);
-    res.status(500).json({ error: "Erro ao buscar contatos" });
+    console.error("Erro ao buscar time:", err);
+    res.status(500).json({ error: "Erro ao buscar time" });
   }
 });
 
@@ -24,23 +24,23 @@ router.get("/:id", async (req, res) => {
     const client = await clientPromise;
     const db = client.db("jplima_db");
 
-    const pokemon = await db
-      .collection("pokemon")
+    const times = await db
+      .collection("brasileiro")
       .findOne({ _id: new ObjectId(id) });
 
-    if (!pokemon) {
-      return res.status(404).json({ error: "pokemon não encontrado." });
+    if (!times) {
+      return res.status(404).json({ error: "times não encontrado." });
     }
 
-    res.json(pokemon);
+    res.json(times);
   } catch (err) {
-    console.error("Erro ao buscar pokemon:", err);
-    res.status(500).json({ error: "Erro ao buscar pokemon." });
+    console.error("Erro ao buscar times:", err);
+    res.status(500).json({ error: "Erro ao buscar times." });
   }
 });
 
 router.get('/download/:id', async (req, res) => {
-   const { id } = req.params;
+  const { id } = req.params;
 
   if (!ObjectId.isValid(id)) {
     return res.status(400).json({ error: "ID inválido." });
@@ -50,43 +50,41 @@ router.get('/download/:id', async (req, res) => {
     const client = await clientPromise;
     const db = client.db("jplima_db");
 
-    const pokemon = await db
-      .collection("pokemon")
+    const times = await db
+      .collection("brasileiro")
       .findOne({ _id: new ObjectId(id) });
 
-    if (!pokemon) {
-      return res.status(404).json({ error: "pokemon não encontrado." });
+    if (!times) {
+      return res.status(404).json({ error: "time não encontrado." });
     }
    
-  // Configura o header para download
-  res.setHeader("Content-Disposition", "attachment; filename=exemplo.txt");
-  res.setHeader("Content-Type", "text/plain; charset=utf-8");
+    res.setHeader("Content-Disposition", "attachment; filename=exemplo.txt");
+    res.setHeader("Content-Type", "text/plain; charset=utf-8");
 
-  res.send(pokemon);
+    res.send(times);
   
   } catch (err) {
     console.error("Erro ao buscar times:", err);
     res.status(500).json({ error: "Erro ao buscar times." });
   }
-
 });
 
 router.post("/", async (req, res) => {
-  const funcionario = req.body;
+  const times = req.body;
 
   try {
     const client = await clientPromise;
-    const db = client.db("joao-pedro-paim");
+    const db = client.db("jplima_db");
 
-    const result = await db.collection("brasileiro").insertOne(funcionario);
+    const result = await db.collection("brasileiro").insertOne(times);
 
     res.status(201).json({
-      message: "Funcionário inserido com sucesso!",
+      message: "Time inserido com sucesso!",
       id: result.insertedId,
     });
   } catch (err) {
-    console.error("Erro ao inserir funcionário:", err);
-    res.status(500).json({ error: "Erro ao inserir funcionário." });
+    console.error("Erro ao inserir times:", err);
+    res.status(500).json({ error: "Erro ao inserir times." });
   }
 });
 
@@ -97,38 +95,18 @@ router.delete("/:id", async (req, res) => {
     const db = client.db("jplima_db");
 
     const result = await db
-      .collection("pokemon")
+      .collection("brasileiro")
       .deleteOne({ _id: new ObjectId(id) });
 
     if (result.deletedCount === 0) {
-      return res.status(404).json({ message: "pokemon não encontrado." });
+      return res.status(404).json({ message: "time não encontrado." });
     }
 
-    res.json({ message: "pokemon deletado com sucesso." });
+    res.json({ message: "time deletado com sucesso." });
   } catch (err) {
-    console.error("Erro ao deletar pokemon:", err);
-    res.status(500).json({ error: "Erro ao deletar pokemon." });
+    console.error("Erro ao deletar times:", err);
+    res.status(500).json({ error: "Erro ao deletar times." });
   }
 });
-
-router.post("/", async (req, res) => {
-  const funcionario = req.body;
-
-  try {
-    const client = await clientPromise;
-    const db = client.db("mydatabase");
-
-    const result = await db.collection("funcionarios").insertOne(funcionario);
-
-    res.status(201).json({
-      message: "Funcionário inserido com sucesso!",
-      id: result.insertedId,
-    });
-  } catch (err) {
-    console.error("Erro ao inserir funcionário:", err);
-    res.status(500).json({ error: "Erro ao inserir funcionário." });
-  }
-});
-
 
 module.exports = router;
