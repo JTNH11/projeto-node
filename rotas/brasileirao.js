@@ -76,7 +76,7 @@ router.post("/", async (req, res) => {
     const client = await clientPromise;
     const db = client.db("jplima_db");
 
-    const result = await db.collection("brasileiro").insertOne(times);
+    const result = await db.collection("brasileiro").insertMany(times);
 
     res.status(201).json({
       message: "Time inserido com sucesso!",
